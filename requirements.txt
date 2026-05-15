@@ -1,0 +1,10 @@
+Flask
+flask-login
+python-dotenv
+flask-mail
+bcrypt
+pyjwt
+supabase
+qrcode[pil]
+fpdf
+gunicorn

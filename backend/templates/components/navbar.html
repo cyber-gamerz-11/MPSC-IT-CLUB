@@ -1,0 +1,42 @@
+<!-- Navigation -->
+<nav id="main-nav">
+    <div class="container nav-content">
+        <div class="logo">
+            <a href="/" style="display: flex; align-items: center; text-decoration: none;">
+                <img src="{{ url_for('static', filename='assets/images/logo.png') }}" 
+                     alt="MPSC IT CLUB" 
+                     style="height: 65px; width: auto; filter: drop-shadow(0 0 10px var(--emerald-green));">
+            </a>
+        </div>
+        
+        <div class="nav-actions">
+            {% if current_user.is_authenticated %}
+                <a href="/user/dashboard" class="btn-primary">{{ current_user.full_name }}</a>
+            {% else %}
+                <a href="/auth/login" class="btn-primary login-btn">Login</a>
+            {% endif %}
+            <div class="hamburger" id="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Circular Menu Overlay -->
+<div class="menu-overlay" id="menu-overlay">
+    <div class="circular-container">
+        <div class="rotating-ring"></div>
+        <ul class="circular-menu" id="circular-menu">
+            <li style="--i:0;"><a href="/">Home</a></li>
+            <li style="--i:1;"><a href="/about">About</a></li>
+            <li style="--i:2;"><a href="/ec-panel">EC Panel</a></li>
+            <li style="--i:3;"><a href="/gallery">Gallery</a></li>
+            <li style="--i:4;"><a href="/programs">Programs</a></li>
+            <li style="--i:5;"><a href="/events">Events</a></li>
+            <li style="--i:6;"><a href="/auth/signup">Join Club</a></li>
+            <li style="--i:7;"><a href="/contact">Contact</a></li>
+        </ul>
+    </div>
+</div>

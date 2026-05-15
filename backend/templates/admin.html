@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Command Center | MPSC IT CLUB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+    <style>
+        .admin-grid { display: grid; grid-template-columns: 280px 1fr; height: 100vh; overflow: hidden; }
+        .admin-sidebar { background: rgba(0,0,0,0.6); backdrop-filter: blur(30px); border-right: 1px solid var(--glass-border); padding: 2.5rem 2rem; display: flex; flex-direction: column; }
+        .admin-main { padding: 4rem; overflow-y: auto; background: rgba(0,0,0,0.2); }
+        .sidebar-menu { list-style: none; margin-top: 3rem; flex-grow: 1; }
+        .sidebar-menu li { margin-bottom: 0.8rem; }
+        .sidebar-menu a { color: var(--soft-gray); text-decoration: none; padding: 14px 22px; border-radius: 12px; display: block; transition: 0.3s; font-weight: 500; }
+        .sidebar-menu li.active a, .sidebar-menu a:hover { background: var(--emerald-green); color: var(--matte-black); box-shadow: 0 0 20px rgba(0, 255, 136, 0.4); transform: translateX(5px); }
+        
+        .dash-card { 
+            padding: 2rem; 
+            text-align: center; 
+            border: 1px solid var(--glass-border);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .dash-card:hover { 
+            transform: scale(1.05); 
+            border-color: var(--emerald-green); 
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.1); 
+        }
+        .dash-card h3 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--soft-gray); margin-bottom: 0.5rem; }
+        
+        .list-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; margin-top: 1.5rem; }
+        .list-table th { text-align: left; padding: 15px 20px; color: var(--emerald-green); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        .list-table td { padding: 18px 20px; background: rgba(255,255,255,0.03); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
+        .list-table td:first-child { border-left: 1px solid var(--glass-border); border-radius: 12px 0 0 12px; }
+        .list-table td:last-child { border-right: 1px solid var(--glass-border); border-radius: 0 12px 12px 0; }
+        .role-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase; }
+        .role-admin { background: #ff4d4d; color: white; }
+        .role-member { background: var(--emerald-green); color: var(--matte-black); }
+        .action-btn { background: none; border: 1px solid var(--glass-border); color: var(--white); padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: 0.3s; }
+        .delete-btn:hover { background: #ff4d4d; border-color: #ff4d4d; }
+    </style>
+</head>
+<body class="dashboard-page">
+    <div class="futuristic-grid"></div>
+    <div class="cursor-glow" id="cursor-glow"></div>
+
+    <div class="admin-grid">
+        <aside class="admin-sidebar">
+            <h2 class="emerald" style="letter-spacing: 2px;">COMMAND CENTER</h2>
+            <p style="font-size: 0.8rem; color: var(--soft-gray);">MPSC IT CLUB OS v2.0</p>
+            
+            <ul class="sidebar-menu">
+                <li class="active"><a href="#overview">Overview</a></li>
+                <li><a href="#events">Events</a></li>
+                <li><a href="#programs">Programs</a></li>
+                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#users">Users</a></li>
+                <li><a href="#ec">EC Panel</a></li>
+                <li><a href="#payments">Payments</a></li>
+                <li style="margin-top: 2rem;"><a href="/" class="btn-secondary" style="text-align: center;">Exit Site</a></li>
+                <li style="margin-top: 1rem;"><a href="/auth/logout" class="btn-primary" style="background: #ff4d4d; border-color: #ff4d4d; color: white; text-align: center;">Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="admin-main">
+            <!-- Overview -->
+            <section id="overview-section" class="dash-section">
+                <h1 class="hero-title" style="font-size: 2.5rem;">Dashboard Overview</h1>
+                <div class="dash-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-top: 2rem;">
+                    <div class="glass-card dash-card">
+                        <h3>Members</h3>
+                        <p id="stat-members" style="font-size: 2rem; font-weight: bold;" class="emerald">0</p>
+                    </div>
+                    <div class="glass-card dash-card">
+                        <h3>Events</h3>
+                        <p id="stat-events" style="font-size: 2rem; font-weight: bold;" class="emerald">0</p>
+                    </div>
+                    <div class="glass-card dash-card">
+                        <h3>Revenue</h3>
+                        <p id="stat-payments" style="font-size: 2rem; font-weight: bold;" class="emerald">0 BDT</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Events -->
+            <section id="events-section" class="dash-section" style="display:none;">
+                <div class="flex-between">
+                    <h2 class="section-title">Club Events</h2>
+                    <button onclick="toggleModal('event-modal')" class="btn-primary">Add Event</button>
+                </div>
+                <div class="glass-card mt-2">
+                    <table class="list-table">
+                        <thead><tr><th>Title</th><th>Date</th><th>Venue</th><th>Actions</th></tr></thead>
+                        <tbody id="events-list"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Programs -->
+            <section id="programs-section" class="dash-section" style="display:none;">
+                <div class="flex-between">
+                    <h2 class="section-title">Past Programs</h2>
+                    <button onclick="toggleModal('program-modal')" class="btn-primary">Add Program</button>
+                </div>
+                <div class="glass-card mt-2">
+                    <table class="list-table">
+                        <thead><tr><th>Image</th><th>Title</th><th>Date</th><th>Description</th><th>Actions</th></tr></thead>
+                        <tbody id="programs-list"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Users -->
+            <section id="users-section" class="dash-section" style="display:none;">
+                <h2 class="section-title">Member Management</h2>
+                <div class="glass-card mt-2">
+                    <table class="list-table">
+                        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr></thead>
+                        <tbody id="users-list"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Gallery -->
+            <section id="gallery-section" class="dash-section" style="display:none;">
+                <div class="flex-between">
+                    <h2 class="section-title">Gallery Management</h2>
+                    <button onclick="toggleModal('gallery-modal')" class="btn-primary">Add Image</button>
+                </div>
+                <div class="glass-card mt-2">
+                    <table class="list-table">
+                        <thead><tr><th>Image</th><th>Caption</th><th>Category</th><th>Actions</th></tr></thead>
+                        <tbody id="gallery-list"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- EC Panel -->
+            <section id="ec-section" class="dash-section" style="display:none;">
+                <div class="flex-between">
+                    <h2 class="section-title">EC Member Management</h2>
+                    <button onclick="toggleModal('ec-modal')" class="btn-primary">Add EC Member</button>
+                </div>
+                <div class="glass-card mt-2">
+                    <table class="list-table">
+                        <thead><tr><th>Name</th><th>Designation</th><th>Section</th><th>Order</th><th>Actions</th></tr></thead>
+                        <tbody id="ec-list"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Payments -->
+            <section id="payments-section" class="dash-section" style="display:none;">
+                <h2 class="section-title">Pending Verifications</h2>
+                <div class="glass-card mt-2">
+                    <table class="list-table">
+                        <thead><tr><th>Member ID</th><th>Ref Email</th><th>TxID</th><th>Actions</th></tr></thead>
+                        <tbody id="payments-list"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals (Add Forms) -->
+    <div id="gallery-modal" class="modal glass-card" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; width: 500px; padding: 2rem;">
+        <h3 class="emerald">Add to Gallery</h3>
+        <form id="add-gallery-form" class="mt-1" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*" required class="w-full mb-1">
+            <input type="text" name="caption" placeholder="Caption" class="w-full mb-1">
+            <select name="category" class="w-full mb-1">
+                <option value="General">General</option>
+                <option value="Events">Events</option>
+                <option value="Workshops">Workshops</option>
+            </select>
+            <button type="submit" class="btn-primary w-full">Upload Image</button>
+            <button type="button" onclick="toggleModal('gallery-modal')" class="btn-secondary w-full mt-1">Cancel</button>
+        </form>
+    </div>
+
+    <div id="event-modal" class="modal glass-card" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; width: 500px; padding: 2rem;">
+        <h3 class="emerald">Create New Event</h3>
+        <form id="add-event-form" class="mt-1" enctype="multipart/form-data">
+            <input type="text" name="title" placeholder="Event Title" required class="w-full mb-1">
+            <input type="date" name="date" required class="w-full mb-1">
+            <input type="text" name="venue" placeholder="Venue" required class="w-full mb-1">
+            <input type="number" name="fee" placeholder="Event Fee (0 for free)" class="w-full mb-1">
+            <input type="file" name="image" accept="image/*" class="w-full mb-1">
+            <textarea name="description" placeholder="Description" class="w-full mb-1"></textarea>
+            <button type="submit" class="btn-primary w-full">Publish</button>
+            <button type="button" onclick="toggleModal('event-modal')" class="btn-secondary w-full mt-1">Cancel</button>
+        </form>
+    </div>
+
+    <div id="program-modal" class="modal glass-card" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; width: 500px; padding: 2rem;">
+        <h3 class="emerald">Add Past Program</h3>
+        <form id="add-program-form" class="mt-1" enctype="multipart/form-data">
+            <input type="text" name="title" placeholder="Program Title" required class="w-full mb-1">
+            <input type="date" name="date" required class="w-full mb-1">
+            <textarea name="description" placeholder="Short Description" required class="w-full mb-1" style="min-height: 80px;"></textarea>
+            <input type="file" name="image" accept="image/*" class="w-full mb-1" required>
+            <button type="submit" class="btn-primary w-full">Save Program</button>
+            <button type="button" onclick="toggleModal('program-modal')" class="btn-secondary w-full mt-1">Cancel</button>
+        </form>
+    </div>
+
+    <!-- EC Modal -->
+    <div id="ec-modal" class="modal glass-card" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; width: 500px; padding: 2rem;">
+        <h3 class="emerald">Add EC Member</h3>
+        <form id="add-ec-form" class="mt-1" enctype="multipart/form-data">
+            <input type="text" name="name" placeholder="Full Name" required class="w-full mb-1">
+            <input type="text" name="designation" placeholder="Designation (e.g. President)" required class="w-full mb-1">
+            <select name="category" class="w-full mb-1" required>
+                <option value="BVB">Bangla Version Boys (BVB)</option>
+                <option value="BVG">Bangla Version Girls (BVG)</option>
+                <option value="EVB">English Version Boys (EVB)</option>
+                <option value="EVG">English Version Girls (EVG)</option>
+            </select>
+            <input type="file" name="image" accept="image/*" class="w-full mb-1">
+            <input type="url" name="facebook" placeholder="Facebook URL (Optional)" class="w-full mb-1">
+            <input type="url" name="instagram" placeholder="Instagram URL (Optional)" class="w-full mb-1">
+            <input type="url" name="website" placeholder="Personal Website URL (Optional)" class="w-full mb-1">
+            <input type="text" name="whatsapp" placeholder="WhatsApp Number (Optional)" class="w-full mb-1">
+            <input type="number" name="order" placeholder="Display Order (1, 2, 3...)" class="w-full mb-1">
+            <button type="submit" class="btn-primary w-full">Save Member</button>
+            <button type="button" onclick="toggleModal('ec-modal')" class="btn-secondary w-full mt-1">Cancel</button>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

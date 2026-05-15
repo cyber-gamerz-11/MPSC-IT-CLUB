@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previous Programs | MPSC IT CLUB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+</head>
+<body>
+    <div class="futuristic-grid"></div>
+    <div class="cursor-glow" id="cursor-glow"></div>
+
+    {% include 'components/navbar.html' %}
+
+    <header class="page-header">
+        <div class="container">
+            <h1 class="hero-title">Previous Programs</h1>
+            <p class="hero-subtitle">A legacy of excellence and achievements.</p>
+        </div>
+    </header>
+
+    <section class="programs-section">
+        <div class="container">
+            <div class="events-grid" id="programs-container">
+                <!-- Programs loaded via JS -->
+            </div>
+        </div>
+    </section>
+
+    {% include 'components/footer.html' %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/circularMenu.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('programs-container');
+            
+            // Skeleton Loader
+            container.innerHTML = Array(3).fill(`
+                <div class="glass-card event-card" style="animation: pulse 1.5s infinite;">
+                    <div style="height: 200px; background: rgba(255,255,255,0.05); margin-bottom: 1rem; border-radius: 8px;"></div>
+                    <div style="height: 20px; background: rgba(255,255,255,0.05); width: 60%; margin-bottom: 1rem;"></div>
+                    <div style="height: 60px; background: rgba(255,255,255,0.05); width: 100%; margin-bottom: 1rem;"></div>
+                </div>
+            `).join('');
+
+            try {
+                const res = await fetch('/user/programs_list');
+                const programs = await res.json();
+
+                if (programs.length === 0) {
+                    container.innerHTML = '<p class="emerald">No previous programs recorded yet.</p>';
+                    return;
+                }
+
+                container.innerHTML = programs.map(pg => `
+                    <div class="glass-card event-card">
+                        <div class="event-badge completed">Completed</div>
+                        <img src="${pg.banner || 'https://picsum.photos/400/200?random=' + Math.random()}" alt="${pg.title}" class="event-banner">
+                        <h3>${pg.title}</h3>
+                        <p class="event-desc">${pg.description}</p>
+                        <div class="event-details">
+                            <span>Date: ${pg.date || 'N/A'}</span>
+                        </div>
+                    </div>
+                `).join('');
+
+                gsap.fromTo('.event-card', 
+                    { opacity: 0, y: 30 }, 
+                    { opacity: 1, y: 0, stagger: 0.1, duration: 0.5, ease: "power2.out", clearProps: "all" }
+                );
+            } catch (err) {
+                container.innerHTML = '<p class="error">Failed to load programs.</p>';
+            }
+        });
+    </script>
+</body>
+</html>

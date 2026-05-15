@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | MPSC IT CLUB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+</head>
+
+<body class="auth-page">
+    <div class="futuristic-grid"></div>
+    <div class="cursor-glow" id="cursor-glow"></div>
+
+    <div class="container auth-container">
+        <div class="glass-card auth-card">
+            <h2 class="auth-title">Welcome Back</h2>
+            <p class="auth-subtitle">Login to access your dashboard</p>
+
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="name@email.com">
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-primary w-full">Login</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="/auth/signup">Sign Up</a></p>
+                <p><a href="#"
+                        onclick="document.getElementById('dev-contact-modal').style.display='flex'; return false;">Forgot
+                        Password?</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Developer Contact Modal -->
+    <div id="dev-contact-modal" class="modal"
+        style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
+        <div class="glass-card" style="width: 400px; padding: 2rem; text-align: center; position: relative;">
+            <h3 class="emerald" style="margin-bottom: 0.5rem; letter-spacing: 1px;">SYSTEM LOCKED</h3>
+            <p style="color: var(--soft-gray); margin-bottom: 1.5rem; font-size: 0.95rem;">To reset your password or
+                regain access, please contact the lead developer directly.</p>
+
+            <div
+                style="background: rgba(0,0,0,0.4); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--glass-border); text-align: left; margin-bottom: 1.5rem;">
+                <p style="margin-bottom: 0.8rem; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--soft-gray); width: 80px;">Developer:</span>
+                    <strong>MD RIFAQAT ISLAM</strong>
+                </p>
+                <p style="margin-bottom: 0.8rem; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--soft-gray); width: 80px;">Email:</span>
+                    <a href="mailto:rifaqat.islam.11@gmail.com" class="emerald"
+                        style="text-decoration: none;">rifaqat.islam.11@gmail.com</a>
+                </p>
+                <p style="margin-bottom: 0.8rem; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--soft-gray); width: 80px;">Website:</span>
+                    <a href="https://cyber-gamerz-11.github.io/-/" class="emerald" target="_blank"
+                        style="text-decoration: none;">Portfolio</a>
+                </p>
+                <p style="margin: 0; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--soft-gray); width: 80px;">WhatsApp:</span>
+                    <a href="https://wa.me/8801889726721" class="emerald" target="_blank"
+                        style="text-decoration: none;">+8801889726721</a> <!-- Update this number -->
+                </p>
+            </div>
+
+            <button onclick="document.getElementById('dev-contact-modal').style.display='none'"
+                class="btn-secondary w-full" style="border-color: #ff4d4d; color: #ff4d4d;">Close Window</button>
+        </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+</body>
+
+</html>

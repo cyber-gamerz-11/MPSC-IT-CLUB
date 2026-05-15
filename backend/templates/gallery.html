@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | MPSC IT CLUB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+    <style>
+        .final-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 20px 0;
+        }
+
+        .final-gallery-card {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #000;
+            border: 1px solid rgba(0, 255, 136, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.4s ease;
+            height: 320px;
+            
+            /* CSS Animation for reveal */
+            animation: cardReveal 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        @keyframes cardReveal {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .final-gallery-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: #00ff88;
+            box-shadow: 0 15px 40px rgba(0, 255, 136, 0.2);
+        }
+
+        .final-gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            /* Absolutely no opacity or filters that could cause dimming */
+            transition: transform 0.6s ease;
+        }
+
+        .final-gallery-card:hover .final-gallery-img {
+            transform: scale(1.08);
+        }
+
+        .final-caption-box {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 30px 20px 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 50%, transparent 100%);
+            color: white;
+            pointer-events: none;
+            
+            /* Perfectly hide the box below the container */
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .final-gallery-card:hover .final-caption-box {
+            transform: translateY(0);
+        }
+
+        .final-caption-title {
+            margin: 0;
+            font-size: 0.95rem; /* Smaller font */
+            color: #fff; /* White text */
+            font-weight: 500;
+            line-height: 1.4;
+            /* Prevent massive text overflow */
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .final-caption-sub {
+            margin: 8px 0 0;
+            font-size: 0.75rem;
+            color: #00ff88; /* Emerald accent for the subtext */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Dedicated Lightbox */
+        .final-lightbox {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 5, 0.98);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .final-lightbox.show {
+            opacity: 1;
+        }
+
+        .final-lightbox-inner {
+            max-width: 90%;
+            max-height: 90vh;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .final-lightbox.show .final-lightbox-inner {
+            transform: scale(1);
+        }
+
+        .final-lightbox-img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 12px;
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.15);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .final-lightbox-text {
+            margin-top: 20px;
+            color: #fff;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .final-close-btn {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: #fff;
+            font-size: 40px;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        
+        .final-close-btn:hover {
+            color: #00ff88;
+        }
+    </style>
+</head>
+<body>
+    <div class="futuristic-grid"></div>
+    {% include 'components/navbar.html' %}
+
+    <header class="page-header">
+        <div class="container">
+            <h1 class="hero-title">Visual Archive</h1>
+            <p class="hero-subtitle">Exploring our legacy, one memory at a time.</p>
+        </div>
+    </header>
+
+    <section class="gallery-section" style="padding-bottom: 5rem;">
+        <div class="container">
+            <div id="gallery-container" class="final-gallery-grid">
+                <!-- Javascript will inject cards here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- The Lightbox -->
+    <div id="gallery-lightbox" class="final-lightbox" onclick="closeLightbox()">
+        <div class="final-lightbox-inner" onclick="event.stopPropagation()">
+            <span class="final-close-btn" onclick="closeLightbox()">&times;</span>
+            <img id="lightbox-image" class="final-lightbox-img" src="">
+            <div id="lightbox-title" class="final-lightbox-text"></div>
+        </div>
+    </div>
+
+    {% include 'components/footer.html' %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/circularMenu.js') }}"></script>
+    <script>
+        async function fetchAndRenderGallery() {
+            const container = document.getElementById('gallery-container');
+            
+            try {
+                const res = await fetch('/user/gallery_list');
+                const images = await res.json();
+
+                if (images.length === 0) {
+                    container.innerHTML = '<p style="color: #00ff88; grid-column: 1/-1; text-align: center;">The gallery is empty right now.</p>';
+                    return;
+                }
+
+                container.innerHTML = ''; // Clear
+
+                images.forEach((img, index) => {
+                    // Create card element
+                    const card = document.createElement('div');
+                    card.className = 'final-gallery-card';
+                    
+                    // Stagger animation delay based on index
+                    card.style.animationDelay = `${index * 0.1}s`;
+
+                    card.innerHTML = `
+                        <img src="${img.url}" class="final-gallery-img" alt="${img.caption}">
+                        <div class="final-caption-box">
+                            <h3 class="final-caption-title">${img.caption || 'MPSC IT CLUB'}</h3>
+                            <p class="final-caption-sub">${img.category || 'Event'}</p>
+                        </div>
+                    `;
+
+                    card.onclick = () => openLightbox(img.url, img.caption);
+                    container.appendChild(card);
+                });
+
+            } catch (err) {
+                console.error("Gallery Error:", err);
+                container.innerHTML = '<p style="color: red; grid-column: 1/-1; text-align: center;">Error loading images. Please check console.</p>';
+            }
+        }
+
+        function openLightbox(url, caption) {
+            const lb = document.getElementById('gallery-lightbox');
+            document.getElementById('lightbox-image').src = url;
+            document.getElementById('lightbox-title').innerText = caption || 'MPSC IT CLUB';
+            
+            lb.style.display = 'flex';
+            // Slight delay to allow display:flex to apply before adding opacity class
+            setTimeout(() => {
+                lb.classList.add('show');
+            }, 10);
+            
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            const lb = document.getElementById('gallery-lightbox');
+            lb.classList.remove('show');
+            
+            setTimeout(() => {
+                lb.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }, 300);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', fetchAndRenderGallery);
+        
+        // Escape key to close lightbox
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+        });
+    </script>
+</body>
+</html>

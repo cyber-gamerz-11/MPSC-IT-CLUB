@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | MPSC IT CLUB</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+    <style>
+        /* Tech specific styling */
+        .terminal-header {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, rgba(0, 255, 136, 0.05) 0%, transparent 70%);
+            padding: 80px 20px 20px 20px;
+            box-sizing: border-box;
+        }
+
+        .terminal-box {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--emerald-green);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.15);
+            max-width: 1000px;
+            width: 95%;
+            text-align: left;
+        }
+
+        .terminal-top {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        .dot.red {
+            background: #ff5f56;
+        }
+
+        .dot.yellow {
+            background: #ffbd2e;
+        }
+
+        .dot.green {
+            background: #27c93f;
+        }
+
+        .about-split {
+            display: flex;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .about-left {
+            flex: 1;
+            min-width: 300px;
+            border-right: 1px solid rgba(0, 255, 136, 0.2);
+            padding-right: 2rem;
+            font-family: 'Fira Code', monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .about-right {
+            flex: 1.5;
+            min-width: 300px;
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .code-title {
+            color: var(--white);
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .code-title span {
+            color: var(--emerald-green);
+        }
+
+        .about-right h3 {
+            color: var(--emerald-green);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .about-right p {
+            color: var(--soft-gray);
+            line-height: 1.7;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .domain-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .tag {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--emerald-green);
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .tag:hover {
+            background: var(--emerald-green);
+            color: var(--matte-black);
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            .about-left {
+                border-right: none;
+                padding-right: 0;
+                border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+                padding-bottom: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="futuristic-grid"></div>
+    <div class="cursor-glow" id="cursor-glow"></div>
+
+    {% include 'components/navbar.html' %}
+
+    <header class="terminal-header">
+        <div class="container" style="display: flex; justify-content: center;">
+            <div class="terminal-box glass-card" id="about-card">
+                <div class="terminal-top">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+
+                <div class="about-split">
+                    <!-- Developer Vibe (Left) -->
+                    <div class="about-left">
+                        <div id="type-comment"
+                            style="color: var(--soft-gray); font-size: 0.9rem; margin-bottom: 1rem; min-height: 1.2rem;">
+                        </div>
+                        <h1 id="type-code" class="code-title" style="min-height: 5.5rem; color: var(--emerald-green);">
+                        </h1>
+                        <p id="type-intro"
+                            style="color: #00ff88; font-size: 1.1rem; line-height: 1.6; min-height: 100px;"></p>
+                    </div>
+
+                    <!-- Human Readable (Right) -->
+                    <div class="about-right">
+                        <h3 id="type-h1" style="min-height: 2rem;"></h3>
+                        <p id="type-p1" style="min-height: 6rem;"></p>
+
+                        <h3 id="type-h2" style="min-height: 2rem; margin-top: 1rem;"></h3>
+                        <p id="type-p2" style="margin-bottom: 1rem; min-height: 3.5rem;"></p>
+
+                        <div class="domain-tags">
+                            <div class="tag" style="opacity: 0; transform: scale(0.5);">💻 Web Development</div>
+                            <div class="tag" style="opacity: 0; transform: scale(0.5);">🤖 Robotics</div>
+                            <div class="tag" style="opacity: 0; transform: scale(0.5);">🎨 UI/UX Design</div>
+                            <div class="tag" style="opacity: 0; transform: scale(0.5);">🧠 Competitive Logic</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    {% include 'components/footer.html' %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/circularMenu.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.registerPlugin(TextPlugin);
+
+            // Card entrance animation
+            gsap.from("#about-card", {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                ease: "power3.out"
+            });
+
+            // System Boot-up Sequence
+            const tl = gsap.timeline({ delay: 0.5 }); // Terminal starts in 0.5 seconds
+
+            tl.to("#type-comment", { duration: 0.5, text: "// initialize_club.js", ease: "none" })
+                .to("#type-code", { duration: 1, text: "const club = 'MPSC IT';", ease: "none" })
+                .to("#type-intro", { duration: 2.5, text: "> We are the hub for developers, designers, and roboticists at Mohammadpur Preparatory School & College.", ease: "none" })
+                .to("#type-h1", { duration: 0.5, text: "> Our Goal", ease: "none" })
+                .to("#type-p1", { duration: 3, text: "To empower the next generation of students by bridging the gap between theoretical knowledge and practical technological innovation. We transform passionate learners into capable creators.", ease: "none" })
+                .to("#type-h2", { duration: 0.5, text: "> Core Domains", ease: "none" })
+                .to("#type-p2", { duration: 2, text: "We specialize in four primary technology sectors to prepare our members for the future:", ease: "none" })
+                .to(".tag", { opacity: 1, scale: 1, duration: 0.5, stagger: 0.1, ease: "back.out(1.5)" });
+        });
+    </script>
+</body>
+
+</html>
