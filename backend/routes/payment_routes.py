@@ -47,28 +47,5 @@ def verify_payment():
         return jsonify({"error": "Unauthorized"}), 403
     
     data = request.json
-    status = data['status']
-    payment_id = data['id']
-    
-    db = get_db()
-    
-    # If approving, add to permanent revenue
-    if status == 'approved':
-        # Get the payment and event fee
-        p_res = db.table("payments").select("event_id, amount").eq("id", payment_id).execute()
-        if p_res.data:
-            payment = p_res.data[0]
-            # Use event fee if amount not already set
-            amount = payment.get('amount') or 0
-            if amount == 0:
-                e_res = db.table("events").select("fee").eq("id", payment['event_id']).execute()
-                if e_res.data:
-                    amount = int(e_res.data[0].get('fee', 0) or 0)
-                    # Lock the amount in the payment record
-                    db.table("payments").update({"amount": amount}).eq("id", payment_id).execute()
-            
-            # Increment total_revenue in club_stats
-            db.rpc('increment_revenue', {'amount_to_add': amount}).execute()
-
-    Payment.verify(payment_id, status)
+    Payment.verify(data['id'], data['status'])
     return jsonify({"success": "Payment status updated"}), 200
