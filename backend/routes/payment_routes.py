@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from backend.config.db import get_db
+from backend.models.payment import Payment
 
 payment_bp = Blueprint('payments', __name__)
 
